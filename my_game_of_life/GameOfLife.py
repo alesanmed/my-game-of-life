@@ -68,10 +68,10 @@ class GameOfLife():
 
   def get_cell_and_neighbors(self, cell:tuple , remove_itself: bool=False) -> list:
     min_x = cell[0] - 1 if cell[0] - 1 >= 0 else cell[0]
-    max_x = cell[0] + 1 if cell[0] + 1 <= self.board_width else cell[0]
+    max_x = cell[0] + 1 if cell[0] + 1 < self.board_width else cell[0]
 
     min_y = cell[1] - 1 if cell[1] - 1 >= 0 else cell[1]
-    max_y = cell[1] + 1 if cell[1] + 1 <= self.board_height else cell[1]
+    max_y = cell[1] + 1 if cell[1] + 1 < self.board_height else cell[1]
 
     cells_to_check = [(x, y) for x in range(min_x, max_x + 1) for y in range(min_y, max_y + 1)]
 
