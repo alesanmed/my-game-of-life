@@ -1,7 +1,10 @@
 from sortedcontainers import SortedList
+import time
+import os
 
 class GameOfLife():  
-  def __init__(self, board_dimensions: tuple, initial_cells: list):
+  def __init__(self, board_dimensions: tuple, initial_cells: list, generations_limit: int = -1,
+    waiting_time: float = 1, first_generation_wait: float = 2):
     """
     Class representing the Game of life. It has generations and board dimensions
     """
@@ -17,13 +20,28 @@ class GameOfLife():
 
     self.last_generation = self.create_generation(initial_cells)
 
-  def start(self, generations=-1):
+    self.generations_limit = generations_limit
+
+    self.waiting_time = waiting_time
+
+    self.first_generation_wait = first_generation_wait
+
+  def start(self):
     generations_count = 0
 
-    while generations >= generations_count:
+    while self.generations_limit != generations_count:
+      self.print_last_generation_board()
+
       self.next_step()
 
-      print(self.last_generation)
+      if self.generations_limit == -1 and len(self.last_generation) == 0:
+        print("No living cells at generation {0}".format(len(self.generations)))
+        break
+      elif self.last_generation == self.generations[-1]:
+        print("Stabilized at generation {0}".format(len(self.generations)))
+        break
+      
+      time.sleep(self.waiting_time if generations_count > 0 else self.first_generation_wait)
 
       generations_count += 1
     
@@ -102,14 +120,26 @@ class GameOfLife():
     
     return live_neighbors == 3
 
+  def print_last_generation_board(self):
+    self.print_generation_board(self.last_generation)
+
+  def print_generation_board(self, generation):
+    board = self.get_generation_board(generation)
+
+    console_board = '\n'.join([' '.join(row) for row in board])
+    
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+    print(console_board)
+
   def get_generation_board(self, generation=None):
     if generation is None:
       generation = self.last_generation
 
-    board = [[0 for col in range(self.board_width)] for row in range(self.board_height)]
+    board = [[' ' for col in range(self.board_width)] for row in range(self.board_height)]
 
     for cell in generation:
-      board[cell[1]][cell[0]] = 1
+      board[cell[1]][cell[0]] = '\u2588'
 
     return board[::-1]
 
